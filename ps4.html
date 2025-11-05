@@ -1,0 +1,386 @@
+<!-- 
+  این کد یک رابط کاربری شبیه به PlayStation 4 را ایجاد می‌کند.
+  شامل یک نوار بالایی، یک ردیف آیکون‌های بازی، یک پنل جزئیات و یک نوار پایینی است.
+  از Tailwind CSS برای استایل‌دهی و از JavaScript برای تعامل‌پذیری استفاده می‌کند.
+  در این نسخه، رنگ نئون آیکون‌ها به صورت پویا و بر اساس هر آیکون تغییر می‌کند.
+  پیام "Made by Arshia" با افکت نئون طلایی در پایین صفحه اضافه شده است.
+  فاصله بین آیکون‌ها از 2rem به 4rem افزایش یافته است.
+  قابلیت پخش صدای دلخواه هنگام جابجایی بین آیتم‌ها با استفاده از Tone.js اضافه شده است.
+-->
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PlayStation 4 UI</title>
+    <!-- Tailwind CSS CDN for styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Tone.js CDN for sound effects -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;700&display=swap');
+
+        body {
+            font-family: 'Vazirmatn', sans-serif;
+            background-color: #0d121c; /* رنگ زمینه شبیه به PS4 */
+            color: #d1d5db; /* رنگ متن */
+            overflow: hidden; /* جلوگیری از اسکرول غیرضروری */
+            user-select: none; /* جلوگیری از انتخاب متن */
+        }
+        
+        .ps4-container {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 1rem;
+        }
+
+        .icon-row {
+            display: flex;
+            align-items: center;
+            gap: 4rem; /* فاصله آیتم‌ها افزایش یافته است */
+            transform: scale(0.75);
+            transition: transform 0.5s ease-in-out;
+            will-change: transform;
+        }
+
+        .icon-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: pointer;
+            transition: transform 0.3s ease-in-out, filter 0.3s ease-in-out;
+            will-change: transform, filter;
+            filter: grayscale(100%) opacity(0.6);
+        }
+        
+        .icon-item img {
+            width: 150px;
+            height: 150px;
+            border-radius: 1rem;
+            transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+        }
+
+        .icon-item .icon-title {
+            margin-top: 0.5rem;
+            font-size: 1.25rem;
+            font-weight: bold;
+            text-align: center;
+            color: #6b7280;
+            transition: color 0.3s ease-in-out;
+        }
+
+        .icon-item.active {
+            transform: scale(1.3);
+            filter: grayscale(0%) opacity(1);
+            position: relative;
+            z-index: 10;
+        }
+
+        .icon-item.active img {
+            transform: scale(1.1);
+            /* حالا رنگ نئون توسط JavaScript تنظیم می‌شود */
+        }
+
+        .icon-item.active .icon-title {
+            color: white;
+        }
+
+        .details-panel {
+            min-height: 200px;
+            width: 100%;
+            max-width: 900px;
+            margin-top: 2rem;
+            padding: 2rem;
+            background-color: rgba(14, 20, 31, 0.5); /* پس‌زمینه نیمه‌شفاف */
+            backdrop-filter: blur(10px);
+            border-radius: 1.5rem;
+            border: 1px solid rgba(48, 59, 81, 0.3);
+            transition: opacity 0.3s ease-in-out;
+            opacity: 0;
+            will-change: opacity;
+        }
+
+        .details-panel.show {
+            opacity: 1;
+        }
+
+        .details-panel h2 {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #e5e7eb;
+            margin-bottom: 0.5rem;
+        }
+
+        .details-panel p {
+            font-size: 1rem;
+            line-height: 1.5;
+            color: #d1d5db;
+        }
+
+        .top-bar, .bottom-bar {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 2rem;
+            position: absolute;
+            z-index: 20;
+        }
+        
+        .top-bar { top: 0; }
+        .bottom-bar { bottom: 0; }
+        
+        .user-info, .time-info, .notification-icon {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .profile-picture {
+            width: 40px;
+            height: 40px;
+            border-radius: 9999px;
+            border: 2px solid #3b82f6;
+        }
+
+        /* Keyboard navigation indicator */
+        .icon-item.nav-active {
+            box-shadow: 0 0 20px 5px rgba(255, 255, 255, 0.5);
+            outline: 2px solid white;
+        }
+        
+        /* Animation for the background waves, PS4-like */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #1f2a40, #0a111a, #1f2a40, #0a111a);
+            background-size: 400% 400%;
+            animation: background-pan 30s ease-in-out infinite;
+            z-index: -1;
+        }
+
+        @keyframes background-pan {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* Styling for the new footer content */
+        .arshia-text {
+            color: #FFD700; /* رنگ طلایی */
+            text-shadow: 0 0 10px #FFD700, 0 0 20px #FFD700, 0 0 30px #FFD700; /* افکت نئون طلایی */
+        }
+
+        .shape-icon {
+            width: 15px;
+            height: 15px;
+            background-color: #FFD700;
+            box-shadow: 0 0 10px #FFD700, 0 0 20px #FFD700;
+            margin: 0 10px;
+            text-align: center;
+        }
+        
+        .circle-shape {
+            border-radius: 50%;
+        }
+
+        .square-shape {
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-gray-300">
+
+    <!-- نوار بالایی -->
+    <header class="top-bar">
+        <div class="user-info">
+            <img src="no.png" class="profile-picture" alt="تصویر پروفایل">
+            <span>User 1</span>
+        </div>
+        <div class="time-info">
+            <span id="current-time"></span>
+        </div>
+        <div class="flex items-center gap-4">
+            <span class="notification-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-400 hover:text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+                </svg>
+            </span>
+            <span class="battery-icon">
+                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-400 hover:text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                </svg>
+            </span>
+        </div>
+    </header>
+
+    <!-- محتوای اصلی -->
+    <main class="ps4-container">
+        <!-- ردیف آیکون‌های بازی -->
+        <section id="icon-row" class="icon-row">
+            <!-- آیتم‌های آیکون به صورت پویا توسط JavaScript ایجاد می‌شوند -->
+        </section>
+
+        <!-- پنل جزئیات -->
+        <div id="details-panel" class="details-panel">
+            <!-- محتوای جزئیات به صورت پویا توسط JavaScript تغییر می‌کند -->
+        </div>
+    </main>
+    
+    <!-- نوار پایینی -->
+    <footer class="bottom-bar">
+        <div class="flex items-center justify-center w-full">
+            <div class="shape-icon circle-shape"></div>
+            <span class="arshia-text text-xl font-bold">made it by arshia</span>
+            <div class="shape-icon square-shape"></div>
+        </div>
+    </footer>
+
+    <script>
+        // آرایه‌ای از اشیاء برای نگهداری اطلاعات آیکون‌ها
+        const icons = [
+            { name: "Home", image: "ps4.png", neonColor: "rgba(85, 172, 238, 0.7)", url: "index2.html" },
+            { name: "the wolf hack", image: "host.png", neonColor: "rgba(231, 76, 60, 0.7)", url: "https://wolf-5.github.io/900c/index.html" },
+            { name: "Goldhen", image: "goldhen.png", neonColor: "yellow", url: "GoldHEN_v2.4b18.5.7z" },
+            { name: "fimwares", image: "find.png", neonColor: "purple", url: "https://darthsternie.net/ps4-firmwares/" },
+            { name: "Jailbreak with no USB", image: "pngfind.com-ps4-logo-png-983235.png", neonColor: "blue", url: "https://ps4idea.github.io/900" },
+            { name: "another host", image: "gogo.png", neonColor: "rgba(112, 128, 144, 0.7)", url: "bb.html" },
+        ];
+
+        // اطلاعات جزئیات برای هر آیکون
+        const details = {
+            "Home": { title: "Home", description: "for more options" },
+            "the wolf hack": { title: "the wolf hack", description: "to jailbreak your ps4 exploit 9.00" },
+            "Goldhen": { title: "Goldhen", description: "download goldhen lstest version" },
+            "fimwares": { title: "fimwares", description: "to download updates" },
+            "Jailbreak with no USB": { title: "jail break ps4 with no USB", description: "jailbreak your ps4 9.00 but you dont need any usb" },
+            "another host": { title: "another host", description: "see another hosts" },
+        };
+
+        let activeIndex = 0;
+        const iconRow = document.getElementById('icon-row');
+        const detailsPanel = document.getElementById('details-panel');
+        let soundPlayer;
+        let isSoundReady = false;
+
+        // تابع برای رندر کردن آیکون‌ها
+        function renderIcons() {
+            iconRow.innerHTML = ''; // پاک کردن محتوای قبلی
+            icons.forEach((icon, index) => {
+                const iconItem = document.createElement('div');
+                iconItem.className = `icon-item transition-all duration-300 ${index === activeIndex ? 'active' : ''}`;
+                iconItem.innerHTML = `
+                    <img src="${icon.image}" alt="${icon.name}">
+                    <span class="icon-title">${icon.name}</span>
+                `;
+                iconItem.addEventListener('click', () => {
+                    selectIcon(index);
+                    navigateToActiveIcon(); // انتقال به صفحه با کلیک
+                });
+                iconRow.appendChild(iconItem);
+            });
+        }
+
+        // تابع برای به‌روزرسانی پنل جزئیات
+        function updateDetailsPanel(index) {
+            const selectedIconName = icons[index].name;
+            const currentDetails = details[selectedIconName];
+            detailsPanel.innerHTML = `
+                <h2>${currentDetails.title}</h2>
+                <p>${currentDetails.description}</p>
+            `;
+            detailsPanel.classList.add('show');
+        }
+
+        // تابع برای انتخاب یک آیکون
+        function selectIcon(index) {
+            const oldActiveItem = iconRow.querySelector('.icon-item.active');
+            if (oldActiveItem) {
+                oldActiveItem.classList.remove('active');
+                oldActiveItem.querySelector('img').style.boxShadow = 'none'; // حذف سایه نئون
+            }
+
+            activeIndex = index;
+            const newActiveItem = iconRow.querySelectorAll('.icon-item')[activeIndex];
+            newActiveItem.classList.add('active');
+
+            // اعمال رنگ نئون پویا
+            const neonColor = icons[activeIndex].neonColor;
+            newActiveItem.querySelector('img').style.boxShadow = `0 0 40px ${neonColor}`;
+            
+            updateDetailsPanel(activeIndex);
+            
+            // پخش صدای جدید
+            if (isSoundReady) {
+                // اطمینان از اینکه پخش‌های قبلی متوقف شده‌اند
+                soundPlayer.stop();
+                soundPlayer.start();
+            }
+        }
+
+        // تابع برای انتقال به URL مربوط به آیکون فعال
+        function navigateToActiveIcon() {
+            const activeUrl = icons[activeIndex].url;
+            if (activeUrl) {
+                window.location.href = activeUrl;
+            }
+        }
+
+        // اضافه کردن رویدادهای کلید برای پیمایش و انتقال
+        document.addEventListener('keydown', (e) => {
+            if (e.key === "ArrowLeft") {
+                e.preventDefault();
+                activeIndex = (activeIndex + 1) % icons.length;
+                selectIcon(activeIndex);
+            } else if (e.key === "ArrowRight") {
+                e.preventDefault();
+                activeIndex = (activeIndex - 1 + icons.length) % icons.length;
+                selectIcon(activeIndex);
+            } else if (e.key === "Enter") {
+                navigateToActiveIcon();
+            }
+        });
+
+        // تابع برای به‌روزرسانی زمان
+        function updateTime() {
+            const now = new Date();
+            let hours = now.getHours();
+            let minutes = now.getMinutes();
+            hours = hours < 10 ? '0' + hours : hours;
+            minutes = minutes < 10 ? '0' + minutes : minutes;
+            document.getElementById('current-time').innerText = `${hours}:${minutes}`;
+        }
+        
+        // یک شنونده رویداد برای فعال کردن صدا بعد از اولین تعامل کاربر
+        document.body.addEventListener('click', () => {
+            if (!isSoundReady) {
+                Tone.start();
+                // ** اینجا URL فایل صوتی دلخواه خود را قرار دهید **
+                const soundFileUrl = "https://kappa.vgmsite.com/soundtracks/playstation-4-system-software-sounds-effects-ps4-gamerip-2013/qkgdbpixbo/12.%20Src19%20Se%20Log%20Cursor.mp3"; 
+
+                // یک پلیر Tone.js برای پخش صدا ایجاد می‌کنیم
+                soundPlayer = new Tone.Player(soundFileUrl).toDestination();
+
+                // منتظر می‌مانیم تا فایل صوتی بارگذاری شود
+                soundPlayer.onload = () => {
+                    isSoundReady = true;
+                };
+            }
+        }, { once: true });
+        
+        // اجرای اولیه
+        window.onload = function() {
+            renderIcons();
+            selectIcon(1); // انتخاب اولین آیکون به صورت پیش‌فرض
+            setInterval(updateTime, 60000); // به‌روزرسانی زمان هر دقیقه
+        };
+    </script>
+</body>
+</html>

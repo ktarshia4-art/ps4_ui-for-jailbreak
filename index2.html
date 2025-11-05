@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PS4 Style Menu</title>
+<style>
+  body { background: #0f172a; color: white; font-family: sans-serif; text-align: center; }
+  .menu { display: flex; justify-content: center; gap: 20px; margin-top: 50px; overflow-x: auto; }
+  .item { width: 120px; cursor: pointer; border-radius: 10px; transition: transform 0.3s, border 0.3s; }
+  .item img { width: 100%; border-radius: 10px; }
+  .item p { margin-top: 10px; }
+  .selected { transform: scale(1.2); border: 3px solid #3b82f6; }
+</style>
+</head>
+<body>
+  <div class="top-bar">
+  made it by ARSHIA
+</div>
+
+<style>
+  .top-bar {
+    width: 100%;
+    background: rgba(15, 23, 42, 0.8); /* آبی تیره با شفافیت */
+    color: white;              
+    text-align: center;        
+    padding: 12px 0;           
+    font-family: Arial, sans-serif;
+    font-size: 18px;
+    font-weight: bold;
+
+    position: fixed;           
+    top: 0;
+    left: 0;
+
+    border-radius: 0 0 20px 20px; 
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    z-index: 9999;             
+    backdrop-filter: blur(6px); /* محو شدن پشت نوار برای افکت شیشه‌ای */
+  }
+</style>
+<br>
+<br>
+<br>
+
+<h1 style="font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;">PS4 jailbreaks menu</h1>
+
+<div class="menu" id="menu">
+  <div class="item" data-name="PS4 Firmwares" data-url="https://darthsternie.net/ps4-firmwares/">
+    <img src="find.png" alt="PS4 Firmwares">
+    <p>PS4 Firmwares</p>
+  </div>
+  <div class="item" data-name="Goldhen" data-url="GoldHEN_v2.4b18.5.7z">
+    <img src="goldhen.png" alt="Goldhen">
+    <p>Goldhen</p>
+  </div>
+  <div class="item" data-name="9.00 jailbreak" data-url="https://wolf-5.github.io/900c/index.html">
+    <img src="wolf.png" alt="9.00 jailbreak">
+    <p>the wolf hack</p>
+  </div>
+  <div class="item" data-name="Offline cash" data-url="index3.html">
+    <img src="ps4.png" alt="Offline cash">
+    <p>Offline cash</p>
+  </div>
+</div>
+<div class="item" data-name="More...options" data-url="ai.html">
+    <img src="Gemini_Generated_Image_4x81xa4x81xa4x81.png" alt="More...options">
+    <p>More...options</p>
+  </div>
+
+<div style="margin-top: 30px; font-size: 20px;">
+  Selected: <span id="selected">Firmware</span>
+</div>
+
+<script>
+  const items = document.querySelectorAll('.item');
+  const selectedSpan = document.getElementById('selected');
+
+  items.forEach(item => {
+    item.addEventListener('click', () => {
+      items.forEach(i => i.classList.remove('selected'));
+      item.classList.add('selected');
+      selectedSpan.textContent = item.dataset.name;
+
+      if(item.dataset.url){
+        window.open(item.dataset.url, '_blank');
+      }
+    });
+  });
+
+  // اولی پیش فرض انتخاب شده
+  items[0].classList.add('selected');
+</script>
+
+</body>
+</html>

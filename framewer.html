@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PS4 Safe Mode</title>
+<style>
+    /* بک‌گراند شبیه flow PS4 */
+    body {
+        margin: 0;
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background: url('wp2937944-sony-playstation-wallpaper.jpg') no-repeat center center;
+        background-size: cover;
+        font-family: Arial, sans-serif;
+        color: #fff;
+        flex-direction: column;
+        text-align: center;
+    }
+
+    /* دکمه */
+    button {
+        padding: 15px 30px;
+        font-size: 20px;
+        background-color: #1c1c1c;
+        color: white;
+        border: 2px solid #fff;
+        border-radius: 5px;
+        cursor: pointer;
+        margin-bottom: 30px;
+    }
+
+    /* نوار پیشرفت */
+    .progress-container {
+        width: 80%;
+        background-color: rgba(255,255,255,0.2);
+        border-radius: 10px;
+        overflow: hidden;
+        height: 25px;
+        margin: 0 auto;
+    }
+
+    .progress-bar {
+        height: 100%;
+        width: 0%;
+        background-color: #fff;
+        transition: width 0.1s linear;
+    }
+
+    /* متن بعد از تکمیل */
+    .done-message {
+        margin-top: 20px;
+        font-size: 18px;
+        display: none;
+    }
+</style>
+</head>
+<body>
+
+<button id="rebuildBtn">Rebuild site Database</button>
+
+<div class="progress-container">
+    <div class="progress-bar" id="progressBar"></div>
+</div>
+
+<div class="done-message" id="doneMessage">When done,exit the page</div>
+
+<script>
+    const button = document.getElementById('rebuildBtn');
+    const progressBar = document.getElementById('progressBar');
+    const doneMessage = document.getElementById('doneMessage');
+
+    button.addEventListener('click', () => {
+        button.disabled = true;
+        let progress = 0;
+        const interval = setInterval(() => {
+            progress += 1;
+            progressBar.style.width = progress + '%';
+            if(progress >= 100){
+                clearInterval(interval);
+                doneMessage.style.display = 'block';
+            }
+        }, 100); // سرعت پر شدن نوار
+    });
+</script>
+
+</body>
+</html>

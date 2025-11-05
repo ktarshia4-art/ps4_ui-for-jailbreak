@@ -1,0 +1,182 @@
+
+
+<!DOCTYPE html>
+<html>
+<head>
+   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PS4 Jailbreak Tab</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      background-color: #000000;
+      color: #fff;
+    }
+
+    main {
+      flex: 1;
+      padding: 20px;
+    }
+
+    footer.custom-footer {
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+      background: #000000;
+      color: #222;
+      text-align: center;
+      padding: 10px 0;
+      font-size: 16px;
+      font-weight: bold;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 20px;
+      box-shadow: 0 -4px 12px rgba(0,0,0,0.15);
+    }
+
+    footer.custom-footer .shape {
+      width: 20px;
+      height: 20px;
+      background: gold;
+      box-shadow: 0 0 10px gold, 0 0 20px orange;
+      animation: glow 2s infinite alternate;
+    }
+
+    footer.custom-footer .circle {
+      border-radius: 50%;
+    }
+
+    footer.custom-footer .square {
+      border-radius: 4px;
+    }
+
+    footer.custom-footer .glow-text {
+      background: linear-gradient(90deg, #FFD700, #FFA500, #FFD700);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      font-weight: bold;
+      animation: textGlow 2s infinite alternate;
+    }
+
+    @keyframes glow {
+      0% {
+        box-shadow: 0 0 5px gold, 0 0 10px orange;
+        transform: scale(1);
+      }
+      50% {
+        box-shadow: 0 0 20px gold, 0 0 40px orange;
+        transform: scale(1.2);
+      }
+      100% {
+        box-shadow: 0 0 5px gold, 0 0 10px orange;
+        transform: scale(1);
+      }
+    }
+
+    @keyframes textGlow {
+      0% {
+        text-shadow: 0 0 5px #FFD700, 0 0 10px #FFA500;
+        transform: scale(1);
+      }
+      50% {
+        text-shadow: 0 0 20px #FFD700, 0 0 40px #FFA500;
+        transform: scale(1.1);
+      }
+      100% {
+        text-shadow: 0 0 5px #FFD700, 0 0 10px #FFA500;
+        transform: scale(1);
+      }
+    }
+
+    .neon-text {
+      font-size: 3em;
+      font-weight: bold;
+      text-align: center;
+      margin-top: 50px;
+      background: linear-gradient(90deg, #FFD700, #FFA500, #FFD700);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: neonGlow 1.5s ease-in-out infinite alternate;
+      text-shadow: 0 0 10px #FFD700, 0 0 20px #FFA500;
+    }
+
+    @keyframes neonGlow {
+      from {
+        text-shadow: 0 0 5px #FFD700, 0 0 10px #FFA500, 0 0 15px #FFD700;
+      }
+      to {
+        text-shadow: 0 0 20px #FFD700, 0 0 30px #FFA500, 0 0 40px #FFD700;
+      }
+    }
+
+    .button-container {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      margin-top: 20px;
+    }
+
+    .button-container button {
+      padding: 10px 20px;
+      border-radius: 20px;
+      cursor: pointer;
+      border: 2px solid blue;
+      background-color: transparent;
+      color: white;
+      font-weight: bold;
+      transition: all 0.3s ease;
+    }
+
+    .button-container button:hover {
+      background-color: blue;
+      color: black;
+      box-shadow: 0 0 15px blue;
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <div style="text-align: center;">
+      <h1 class="neon-text">Welcome</h1>
+      <img src="https://comicbook.com/wp-content/uploads/sites/4/2023/09/e1268b1d-a7dc-4a7f-a318-8e8af5dbc6f1.png" alt="ps plus" style="margin: 5%;" width="30%">
+      <link rel="icon" type="image/icon" href="lua.png">
+      <br><br>
+      <div class="button-container">
+        <button onclick="poppew()" alt="playstation">Learn more</button>
+        <form action="ps4.html" method="get">
+          <button type="submit">PS4 jailbreak menu</button>
+        </form>
+      </div>
+    </div>
+  </main>
+
+  <footer class="custom-footer">
+    <div class="shape circle"></div>
+    <span class="glow-text">Made it by Arshia</span>
+    <div class="shape square"></div>
+  </footer>
+
+  <script>
+    function poppew(){
+      var mobile = document.getElementById("001").value;
+
+      if (mobile.length < 7 || mobile.length > 7){
+        alert("this code is wrong");
+        return;
+      }
+
+      if (mobile.substring(0,1) != '9') {
+        alert("this remote play code is wrong please check");
+        return;
+      }
+
+      alert("ok now click the PS4 jailbreaks menu")
+    }
+  </script>
+</body>
+</html>

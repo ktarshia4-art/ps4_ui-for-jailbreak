@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Offline browser host</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap');
+    
+
+  body {
+    margin: 0;
+    height: 100vh;
+    background: linear-gradient(135deg, #000000, #111);
+    font-family: 'Roboto', sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #fff;
+        background-image: url("ps4-luminous-wave-0xd36pumgigbl01x.jpg");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+  }
+
+  .update-screen {
+    text-align: center;
+    background-color: #0a0a0a;
+    padding: 50px 40px;
+    border-radius: 15px;
+    box-shadow: 0 0 40px #000;
+    width: 350px;
+  }
+
+  .ps-logo {
+    font-size: 60px;
+    color: #ffffff;
+    margin-bottom: 20px;
+    font-weight: bold;
+  }
+
+  h1 {
+    font-size: 22px;
+    margin-bottom: 30px;
+    font-weight: 500;
+  }
+
+  .progress-bar {
+    width: 100%;
+    height: 20px;
+    background-color: #222;
+    border-radius: 10px;
+    overflow: hidden;
+  }
+
+  .progress {
+    height: 100%;
+    width: 0;
+    background-color: #ffffff;
+    border-radius: 10px 0 0 10px;
+    transition: width 0.3s ease;
+  }
+
+  .info {
+    margin-top: 15px;
+    font-size: 16px;
+  }
+
+  button {
+    margin-top: 30px;
+    padding: 12px 25px;
+    font-size: 16px;
+    background-color: #0099ff;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: 0.3s;
+  }
+
+  button:hover {
+    background-color: #007acc;
+
+  }
+  
+</style>
+</head>
+<body>
+    
+
+<div class="update-screen">
+  <div class="ps-logo">Offline cash</div>
+  <h1> Dont quit the page</h1>
+  <div class="progress-bar">
+    <div class="progress" id="progress"></div>
+  </div>
+  <div class="info" id="info" style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">Site not cashed</div>
+  <button onclick="startUpdate()">Start cash to offline host browser </button>
+</div>
+<div class="top-bar">
+  made it by ARSHIA
+</div>
+
+<style>
+  .top-bar {
+    width: 100%;
+    background: rgb(2, 2, 65);          /* پس‌زمینه آبی */
+    color: white;              /* نوشته سفید */
+    text-align: center;        /* متن وسط‌چین */
+    padding: 12px 0;           /* فاصله عمودی برای زیبایی */
+    font-family: Arial, sans-serif;
+    font-size: 18px;
+    font-weight: bold;
+
+    position: fixed;           /* همیشه به بالای صفحه بچسبه */
+    top: 0;
+    left: 0;
+
+    border-radius: 0 0 20px 20px; /* فقط پایین‌ها گرد باشن */
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3); /* سایه ملایم */
+    z-index: 9999;             /* همیشه بالاتر از بقیه عناصر */
+  }
+</style>
+
+<script>
+function startUpdate() {
+  const progress = document.getElementById('progress');
+  const info = document.getElementById('info');
+  let width = 0;
+
+  const interval = setInterval(() => {
+    if(width >= 100) {
+      clearInterval(interval);
+      info.textContent = "cash sucssesfuled || exit the page";
+    } else {
+      width++;
+      progress.style.width = width + '%';
+      info.textContent = width + '%';
+    }
+  }, 80);
+}
+</script>
+
+</body>
+</html>
