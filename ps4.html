@@ -372,72 +372,9 @@
                 soundPlayer.onload = () => {
                     isSoundReady = true;
                 }:
-              // کنترلر با تنظیمات دقیق
-class FixedController {
-    constructor() {
-        this.keyCooldown = false;
-        this.gamepadCooldown = false;
-        this.init();
-    }
-
-    init() {
-        // کیبورد - با تاخیر
-        document.addEventListener('keydown', (e) => {
-            if (this.keyCooldown) return;
-            
-            if (e.key === "ArrowLeft") {
-                this.keyCooldown = true;
-                activeIndex = (activeIndex - 1 + icons.length) % icons.length;
-                selectIcon(activeIndex);
-                setTimeout(() => { this.keyCooldown = false; }, 300);
-            } else if (e.key === "ArrowRight") {
-                this.keyCooldown = true;
-                activeIndex = (activeIndex + 1) % icons.length;
-                selectIcon(activeIndex);
-                setTimeout(() => { this.keyCooldown = false; }, 300);
-            } else if (e.key === "Enter") {
-                navigateToActiveIcon();
-            }
-        });
-
-        // گیم‌پد
-        window.addEventListener("gamepadconnected", (e) => {
-            console.log("🎮 Gamepad connected!");
-            this.startGamepadLoop();
-        });
-    }
-
-    startGamepadLoop() {
-        const checkGamepad = () => {
-            const gamepads = navigator.getGamepads();
-            const gamepad = gamepads[0];
-            
-            if (gamepad && !this.gamepadCooldown) {
-                if (gamepad.buttons[14].pressed) { // D-pad left
-                    this.gamepadCooldown = true;
-                    activeIndex = (activeIndex - 1 + icons.length) % icons.length;
-                    selectIcon(activeIndex);
-                    setTimeout(() => { this.gamepadCooldown = false; }, 300);
-                } else if (gamepad.buttons[15].pressed) { // D-pad right
-                    this.gamepadCooldown = true;
-                    activeIndex = (activeIndex + 1) % icons.length;
-                    selectIcon(activeIndex);
-                    setTimeout(() => { this.gamepadCooldown = false; }, 300);
-                } else if (gamepad.buttons[0].pressed) { // X button
-                    navigateToActiveIcon();
-                }
-            }
-            
-            requestAnimationFrame(checkGamepad);
-        };
-        checkGamepad();
-    }
-}
-
-// راه‌اندازی
-new FixedController();
     </script>
 </body>
 </html>
+
 
 
