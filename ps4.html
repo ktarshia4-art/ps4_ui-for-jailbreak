@@ -371,10 +371,20 @@
                 // منتظر می‌مانیم تا فایل صوتی بارگذاری شود
                 soundPlayer.onload = () => {
                     isSoundReady = true;
-                }:
+                };
+            }
+        }, { once: true });
+        
+        // اجرای اولیه
+        window.onload = function() {
+            renderIcons();
+            selectIcon(1); // انتخاب اولین آیکون به صورت پیش‌فرض
+            setInterval(updateTime, 60000); // به‌روزرسانی زمان هر دقیقه
+        };
     </script>
 </body>
 </html>
+
 
 
 
