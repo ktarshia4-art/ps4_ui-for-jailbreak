@@ -394,7 +394,6 @@
         }
 
         function selectIcon(index) {
-            // isAnimating را اینجا چک نمیکنیم، چون باید سریع عمل کند
             
             const oldActiveItem = iconRow.querySelector('.icon-item.active');
             if (oldActiveItem) {
@@ -405,7 +404,6 @@
             activeIndex = index;
             const newActiveItem = iconRow.querySelectorAll('.icon-item')[activeIndex];
             
-            // اجرای مستقیم تغییرات بدون setTimeout برای واکنش سریعتر
             newActiveItem.classList.add('active');
             const neonColor = icons[activeIndex].neonColor;
             newActiveItem.querySelector('img').style.boxShadow = `0 0 40px ${neonColor}`;
@@ -496,23 +494,15 @@
 
                 body.removeEventListener('animationend', handler);
                 
-                // **خط پاک کردن body.innerHTML حذف شد تا صفحه هنگام "بک زدن" خراب نشود.**
-                
-                // ۴. هدایت **فوری** به صفحه جدید
+                // هدایت **فوری** به صفحه جدید پس از اتمام انیمیشن
                 window.location.href = activeUrl;
-
-                // ۵. تنظیم مجدد وضعیت (برای بازگشت احتمالی)
+                
+                // تنظیم مجدد وضعیت (هرچند با هدایت صفحه این‌ها ریست می‌شوند، اما برای اطمینان نگه می‌داریم)
                 body.classList.remove('transition-out');
                 isAnimating = false;
             });
             
-            // Fallback: در صورتی که انیمیشن به هر دلیلی اجرا نشد یا animationend کار نکرد، بعد از 1.2 ثانیه هدایت کند.
-            setTimeout(() => {
-                if (body.classList.contains('transition-out') && isAnimating) {
-                    // **خط پاک کردن body.innerHTML حذف شد.**
-                    window.location.href = activeUrl;
-                }
-            }, 1200); 
+            // *** حذف شد: Fallback Timer حذف شد تا انیمیشن ناگهانی قطع نشود. ***
         }
 
         document.addEventListener('keydown', (e) => {
@@ -559,15 +549,15 @@
             updateTime();
         };
 
-        // --- کد جدید برای حل مشکل "بک زدن" ---
+        // --- کد مهم برای حل مشکل "بک زدن" ---
         window.addEventListener('pageshow', function(event) {
-            // اگر صفحه از طریق دکمه 'Back' یا 'Forward' (از کش مرورگر) بارگذاری شده است
+            // اگر صفحه از کش مرورگر (Back/Forward) بارگذاری شده است
             if (event.persisted) {
-                // 1. ریست کردن وضعیت انیمیشن
+                // 1. ریست کردن وضعیت انیمیشن و حذف کلاس زوم اوت
                 isAnimating = false;
                 document.body.classList.remove('transition-out');
                 
-                // 2. مطمئن شدن از اینکه المان‌های اصلی UI قابل مشاهده هستند (برای حالتی که Goldhen آنها را پنهان کرده بود)
+                // 2. مطمئن شدن از اینکه المان‌های اصلی UI قابل مشاهده هستند
                 document.querySelector('.top-bar').style.opacity = '1';
                 document.querySelector('.bottom-bar').style.opacity = '1';
                 document.getElementById('icon-row').style.opacity = '1';
@@ -581,6 +571,7 @@
     </script>
 </body>
 </html>
+
 
 
 
