@@ -15,8 +15,10 @@
             color: #d1d5db;
             overflow: hidden;
             user-select: none;
+            /* اضافه شده برای انیمیشن کل صفحه */
             transform-origin: center center;
-            transition: transform 0.5s, opacity 0.5s;
+            /* این انتقال 0.5 ثانیه برای انیمیشن نیست، اما بهتر است باشد */
+            transition: transform 0.5s, opacity 0.5s; 
         }
         
         .ps4-container {
@@ -86,26 +88,32 @@
             text-shadow: 0 0 10px currentColor;
         }
 
+        /* --- Keyframes انیمیشن Zoom Out کل صفحه --- */
         @keyframes screen-transition-out {
-            0% { transform: scale(1); opacity: 1; }
-            100% { transform: scale(0.5); opacity: 0; }
+            0% { transform: scale(1); opacity: 1; } /* وضعیت عادی */
+            100% { transform: scale(0.5); opacity: 0; } /* کوچک شدن شدید و محو شدن */
         }
         
         body.transition-out {
-            animation: screen-transition-out 0.8s ease-out forwards;
+            /* زمان انیمیشن 0.8s */
+            animation: screen-transition-out 0.8s ease-out forwards; 
         }
 
+        /* حذف پس زمینه متحرک (body::before) وقتی در حالت transition-out است */
         body.transition-out::before {
             content: none;
         }
         
+        /* پنهان کردن سریع محتوای روی صفحه (مانند آیکون‌ها و جزئیات) */
         body.transition-out .top-bar,
         body.transition-out .bottom-bar,
         body.transition-out .ps4-container {
             opacity: 0;
-            transition: opacity 0.1s;
+            transition: opacity 0.1s; /* محو شدن سریع محتوا */
         }
+        /* ------------------------------------------- */
         
+        /* --- استایل‌های نوار پیشرفت Goldhen --- */
         .progress-overlay {
             position: fixed;
             top: 0;
@@ -119,13 +127,13 @@
             justify-content: center;
             align-items: center;
             transition: opacity 0.3s ease;
-            opacity: 0;
-            pointer-events: none;
+            opacity: 0; 
+            pointer-events: none; 
         }
         
         .progress-overlay.show {
             opacity: 1;
-            pointer-events: auto;
+            pointer-events: auto; 
         }
 
         .progress-box {
@@ -153,6 +161,7 @@
             background-color: #007bff;
             border-radius: 8px;
         }
+        /* ------------------------------------------- */
 
         .details-panel {
             min-height: 200px;
@@ -257,22 +266,6 @@
         .square-shape {
             border-radius: 4px;
         }
-
-        /* استایل برای انیمیشن‌های بهبود یافته */
-        @keyframes smoothFadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px) scale(0.9);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0) scale(1);
-            }
-        }
-
-        .icon-item.stealth-loaded {
-            animation: smoothFadeInUp 0.5s ease-out forwards;
-        }
     </style>
 </head>
 <body class="bg-gray-900 text-gray-300">
@@ -325,7 +318,6 @@
     </footer>
 
     <script>
-        // ==================== CONFIGURATION ====================
         const icons = [
             { name: "Home", image: "Ps4.png", neonColor: "rgba(85, 172, 238, 0.7)", url: "index.html" },
             { name: "the wolf hack", image: "host.png", neonColor: "rgba(231, 76, 60, 0.7)", url: "https://wolf-5.github.io/900c/index.html" },
@@ -344,7 +336,6 @@
             "another host": { title: "another host", description: "see another hosts" },
         };
 
-        // ==================== GLOBAL VARIABLES ====================
         let activeIndex = icons.findIndex(icon => icon.name === "the wolf hack");
         const iconRow = document.getElementById('icon-row');
         const detailsPanel = document.getElementById('details-panel');
@@ -352,133 +343,6 @@
         let isSoundReady = false;
         let isAnimating = false;
 
-        // ==================== STEALTH BACK BUTTON HANDLER ====================
-        class StealthBackHandler {
-            constructor() {
-                this.isNavigating = false;
-                this.backDetected = false;
-                this.initialLoad = true;
-                this.setupEventListeners();
-                console.log('🔄 Stealth Back Handler Activated');
-            }
-
-            setupEventListeners() {
-                // Detect when user navigates away
-                document.addEventListener('click', (e) => {
-                    if (e.target.closest('.icon-item') || e.target.tagName === 'A') {
-                        this.isNavigating = true;
-                        setTimeout(() => this.isNavigating = false, 3000);
-                    }
-                });
-
-                // Primary method: pageshow event
-                window.addEventListener('pageshow', (event) => {
-                    if (event.persisted) {
-                        console.log('📱 Page loaded from cache - triggering refresh');
-                        this.handleBackNavigation();
-                    }
-                });
-
-                // Secondary method: popstate event
-                window.addEventListener('popstate', (event) => {
-                    this.backDetected = true;
-                    setTimeout(() => this.handleBackNavigation(), 50);
-                });
-
-                // Fallback method: performance navigation
-                if (performance.navigation.type === 2) {
-                    setTimeout(() => this.handleBackNavigation(), 100);
-                }
-
-                this.setRefreshFlag();
-            }
-
-            handleBackNavigation() {
-                if (this.isNavigating || this.initialLoad) {
-                    this.initialLoad = false;
-                    return;
-                }
-
-                if (sessionStorage.getItem('stealthRefreshed')) {
-                    sessionStorage.removeItem('stealthRefreshed');
-                    return;
-                }
-
-                console.log('🎯 Executing stealth refresh');
-                this.executeSeamlessRefresh();
-            }
-
-            executeSeamlessRefresh() {
-                sessionStorage.setItem('stealthRefreshed', 'true');
-                
-                // Try soft refresh first
-                if (this.softRefresh()) {
-                    console.log('✅ Soft refresh successful');
-                } else {
-                    // Fallback to hard refresh
-                    setTimeout(() => this.hardRefresh(), 300);
-                }
-            }
-
-            softRefresh() {
-                try {
-                    const iconItems = document.querySelectorAll('.icon-item');
-                    
-                    if (iconItems.length === 0) return false;
-
-                    // Reset animations
-                    iconItems.forEach(item => {
-                        item.classList.remove('loaded', 'stealth-loaded');
-                        item.style.animation = 'none';
-                    });
-                    
-                    // Force reflow
-                    document.body.offsetHeight;
-                    
-                    // Re-apply animations with new timing
-                    setTimeout(() => {
-                        iconItems.forEach((item, index) => {
-                            setTimeout(() => {
-                                item.classList.add('stealth-loaded');
-                            }, index * 120);
-                        });
-                        
-                        // Restore active state
-                        if (window.activeIndex !== undefined) {
-                            setTimeout(() => {
-                                const activeItems = document.querySelectorAll('.icon-item');
-                                if (activeItems[window.activeIndex]) {
-                                    activeItems[window.activeIndex].classList.add('active');
-                                    const neonColor = icons[window.activeIndex].neonColor;
-                                    activeItems[window.activeIndex].querySelector('img').style.boxShadow = `0 0 40px ${neonColor}`;
-                                    updateDetailsPanel(window.activeIndex);
-                                }
-                            }, iconItems.length * 120 + 200);
-                        }
-                    }, 50);
-                    
-                    return true;
-                } catch (error) {
-                    console.error('Soft refresh failed:', error);
-                    return false;
-                }
-            }
-
-            hardRefresh() {
-                console.log('🔄 Falling back to hard refresh');
-                const currentUrl = window.location.href.split('?')[0];
-                const newUrl = currentUrl + '?refresh=' + Date.now() + '&stealth=true';
-                window.location.replace(newUrl);
-            }
-
-            setRefreshFlag() {
-                if (performance.navigation.type !== 2) {
-                    sessionStorage.removeItem('stealthRefreshed');
-                }
-            }
-        }
-
-        // ==================== CORE FUNCTIONS ====================
         function animateIcons() {
             const iconItems = iconRow.querySelectorAll('.icon-item');
             iconItems.forEach((item, index) => {
@@ -499,8 +363,14 @@
                 `;
                 iconItem.addEventListener('click', () => {
                     if (isAnimating) return;
-                    selectIcon(index);
-                    navigateToActiveIcon();
+                    
+                    // 1. آیکون کلیک شده را فعال کن
+                    selectIcon(index); 
+                    
+                    // 2. انیمیشن انتقال را بلافاصله اجرا کن
+                    setTimeout(() => {
+                        navigateToActiveIcon(); 
+                    }, 50); 
                 });
                 iconRow.appendChild(iconItem);
             });
@@ -524,9 +394,8 @@
         }
 
         function selectIcon(index) {
-            if (isAnimating) return;
-            isAnimating = true;
-
+            // isAnimating را اینجا چک نمیکنیم، چون باید سریع عمل کند
+            
             const oldActiveItem = iconRow.querySelector('.icon-item.active');
             if (oldActiveItem) {
                 oldActiveItem.classList.remove('active');
@@ -536,94 +405,116 @@
             activeIndex = index;
             const newActiveItem = iconRow.querySelectorAll('.icon-item')[activeIndex];
             
-            setTimeout(() => {
-                newActiveItem.classList.add('active');
-                const neonColor = icons[activeIndex].neonColor;
-                newActiveItem.querySelector('img').style.boxShadow = `0 0 40px ${neonColor}`;
-                
-                updateDetailsPanel(activeIndex);
-                
-                if (isSoundReady) {
-                    if (soundPlayer.state === 'started') {
-                        soundPlayer.stop();
-                    }
-                    soundPlayer.start(0);
+            // اجرای مستقیم تغییرات بدون setTimeout برای واکنش سریعتر
+            newActiveItem.classList.add('active');
+            const neonColor = icons[activeIndex].neonColor;
+            newActiveItem.querySelector('img').style.boxShadow = `0 0 40px ${neonColor}`;
+            
+            updateDetailsPanel(activeIndex);
+            
+            if (isSoundReady) {
+                if (soundPlayer.state === 'started') {
+                    soundPlayer.stop();
                 }
-                
-                isAnimating = false;
-            }, 50);
+                soundPlayer.start(0);
+            }
         }
-
+        
+        // **********************************************
+        // تابع مدیریت نوار پیشرفت Goldhen
+        // **********************************************
         function startGoldhenProcess(url) {
             const overlay = document.getElementById('goldhen-progress-overlay');
             const progressBar = document.getElementById('progress-bar');
             const progressStatus = document.getElementById('progress-status');
             
+            // 1. نمایش نوار پیشرفت و پنهان کردن آیتم‌های اصلی صفحه
             overlay.classList.add('show');
             document.querySelector('.top-bar').style.opacity = '0';
             document.querySelector('.bottom-bar').style.opacity = '0';
             document.getElementById('icon-row').style.opacity = '0';
             document.getElementById('details-panel').style.opacity = '0';
             
+            // 2. تنظیم متن اولیه
             progressStatus.innerText = "Connecting to the server...";
             progressBar.style.width = '0%';
+            progressBar.style.transition = 'none';
             
+            // 3. شروع انیمیشن نوار پیشرفت (3 ثانیه)
             setTimeout(() => {
                 progressBar.style.transition = 'width 3s ease-in-out';
                 progressBar.style.width = '100%';
             }, 100);
 
+            // 4. به‌روزرسانی متن به "Connect successfully" پس از پر شدن
             setTimeout(() => {
                 progressStatus.innerText = "Connect successfully";
             }, 3100);
 
+            // 5. پس از به‌روزرسانی نهایی متن، هدایت به لینک دانلود
             setTimeout(() => {
+                // مخفی کردن نوار پیشرفت
                 overlay.classList.remove('show');
+                
+                // هدایت برای شروع دانلود
                 window.location.href = url;
+                
+                // تنظیم مجدد وضعیت (برای بازگشت احتمالی)
                 isAnimating = false;
                 document.querySelector('.top-bar').style.opacity = '1';
                 document.querySelector('.bottom-bar').style.opacity = '1';
                 document.getElementById('icon-row').style.opacity = '1';
                 document.getElementById('details-panel').style.opacity = '1';
-            }, 3500);
+
+            }, 3500); 
         }
+        // **********************************************
 
         function navigateToActiveIcon() {
             const activeUrl = icons[activeIndex].url;
             if (!activeUrl) return;
 
             if (isAnimating) return;
-            isAnimating = true;
+            isAnimating = true; 
 
             const body = document.body;
             const activeIconName = icons[activeIndex].name;
 
+            // اگر آیتم Goldhen باشد، منطق نوار پیشرفت اجرا شود.
             if (activeIconName === "Goldhen") {
-                startGoldhenProcess(activeUrl);
+                startGoldhenProcess(activeUrl); 
                 return;
             }
 
+            // ۱. اضافه کردن کلاس انیمیشن به کل بدنه صفحه
             body.classList.add('transition-out');
             
+            // ۲. منتظر ماندن برای اتمام انیمیشن Zoom Out (0.8s) و سپس هدایت فوری
             body.addEventListener('animationend', function handler(e) {
+                // اطمینان از اینکه انیمیشن مورد نظر تمام شده است
                 if (e.animationName !== 'screen-transition-out') return;
 
                 body.removeEventListener('animationend', handler);
-                body.innerHTML = '';
+                
+                // **خط پاک کردن body.innerHTML حذف شد تا صفحه هنگام "بک زدن" خراب نشود.**
+                
+                // ۴. هدایت **فوری** به صفحه جدید
                 window.location.href = activeUrl;
+
+                // ۵. تنظیم مجدد وضعیت (برای بازگشت احتمالی)
                 body.classList.remove('transition-out');
                 isAnimating = false;
             });
-
+            
+            // Fallback: در صورتی که انیمیشن به هر دلیلی اجرا نشد یا animationend کار نکرد، بعد از 1.2 ثانیه هدایت کند.
             setTimeout(() => {
                 if (body.classList.contains('transition-out') && isAnimating) {
-                    body.innerHTML = '';
+                    // **خط پاک کردن body.innerHTML حذف شد.**
                     window.location.href = activeUrl;
                 }
-            }, 1200);
+            }, 1200); 
         }
 
-        // ==================== EVENT LISTENERS ====================
         document.addEventListener('keydown', (e) => {
             if (isAnimating) return;
             
@@ -636,7 +527,7 @@
                 activeIndex = (activeIndex - 1 + icons.length) % icons.length;
                 selectIcon(activeIndex);
             } else if (e.key === "Enter") {
-                navigateToActiveIcon();
+                navigateToActiveIcon(); 
             }
         });
 
@@ -661,32 +552,35 @@
                 };
             }
         }, { once: true });
-
-        // ==================== INITIALIZATION ====================
+        
         window.onload = function() {
-            // Initialize stealth back handler
-            new StealthBackHandler();
-            
-            // Store active index globally for refresh recovery
-            window.activeIndex = activeIndex;
-            
-            // Render UI
             renderIcons();
             setInterval(updateTime, 60000);
             updateTime();
-
-            // Final safety check
-            setTimeout(() => {
-                const animatedElements = document.querySelectorAll('.icon-item.loaded, .icon-item.stealth-loaded');
-                if (animatedElements.length === 0) {
-                    console.log('🛡️ Safety net: No animated elements found, soft refreshing...');
-                    const handler = new StealthBackHandler();
-                    handler.softRefresh();
-                }
-            }, 1500);
         };
+
+        // --- کد جدید برای حل مشکل "بک زدن" ---
+        window.addEventListener('pageshow', function(event) {
+            // اگر صفحه از طریق دکمه 'Back' یا 'Forward' (از کش مرورگر) بارگذاری شده است
+            if (event.persisted) {
+                // 1. ریست کردن وضعیت انیمیشن
+                isAnimating = false;
+                document.body.classList.remove('transition-out');
+                
+                // 2. مطمئن شدن از اینکه المان‌های اصلی UI قابل مشاهده هستند (برای حالتی که Goldhen آنها را پنهان کرده بود)
+                document.querySelector('.top-bar').style.opacity = '1';
+                document.querySelector('.bottom-bar').style.opacity = '1';
+                document.getElementById('icon-row').style.opacity = '1';
+                document.getElementById('details-panel').style.opacity = '1';
+
+                // 3. رندر مجدد آیکون‌ها
+                renderIcons(); 
+            }
+        });
+        // ------------------------------------------
     </script>
 </body>
 </html>
+
 
 
