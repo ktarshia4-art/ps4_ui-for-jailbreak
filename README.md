@@ -1,7 +1,7 @@
 # PS4 UI for Jailbreak
 
 A clean and modern UI/UX designed for accessing PS4 jailbreak exploit hosts.  
-Created and designed by **Arshia (Arshia Katebi)** — founder of **BlackLED**.
+Created and designed by **Arshia (Arshia Katebi)**
 
 This project does **not** include exploits or payloads.  
 It only provides a polished front-end interface that redirects to trusted external jailbreak hosts.
@@ -47,9 +47,6 @@ UI/UX created by: **Arshia**
 (https://ktarshia4-art.github.io/ps4_ui-for-jailbreak/)
 
 ---
-
-## 📄 License
-Open-source for UI/UX and educational purposes.
 
 ✨ This project remains in active development and will be continuously updated with enhancements,
 optimizations, and improved user experience. ✨
