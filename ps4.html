@@ -5,12 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PlayStation 4 UI</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght&display=swap');
+        /* فونت Vazirmatn حذف شد: برای پایداری و بارگذاری سریع در PS4 */
+        /* @import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght&display=swap'); */
 
         body {
-            font-family: 'Vazirmatn', sans-serif;
+            font-family: sans-serif; /* تغییر به فونت سیستمی امن */
             background-color: #0d121c;
             color: #d1d5db;
             overflow: hidden;
@@ -364,10 +364,12 @@
         let activeIndex = icons.findIndex(icon => icon.name === "the wolf hack");
         const iconRow = document.getElementById('icon-row');
         const detailsPanel = document.getElementById('details-panel');
-        // **متغیر جدید برای دسترسی به لایه پوشاننده**
         const exitOverlay = document.getElementById('exit-overlay'); 
-        let soundPlayer;
-        let isSoundReady = false;
+        
+        // soundPlayer و isSoundReady حذف شدند: برای کاهش بار اضافی و ریسک کرش
+        // let soundPlayer;
+        // let isSoundReady = false;
+        
         let isAnimating = false;
 
         function animateIcons() {
@@ -440,12 +442,15 @@
             
             updateDetailsPanel(activeIndex);
             
+            // کدهای مربوط به soundPlayer حذف شدند
+            /*
             if (isSoundReady) {
                 if (soundPlayer.state === 'started') {
                     soundPlayer.stop();
                 }
                 soundPlayer.start(0);
             }
+            */
         }
         
         // **********************************************
@@ -470,7 +475,8 @@
             
             // 3. شروع انیمیشن نوار پیشرفت (3 ثانیه)
             setTimeout(() => {
-                progressBar.style.transition = 'width 3s ease-in-out';
+                // توجه: بهتر است این انیمیشن را به صورت Jump-Step پیاده‌سازی کنید تا در زمان اجرای Exploit بار پردازشی کمتری داشته باشد.
+                progressBar.style.transition = 'width 3s ease-in-out'; 
                 progressBar.style.width = '100%';
             }, 100);
 
@@ -570,20 +576,23 @@
             document.getElementById('current-time').innerText = `${hours}:${minutes}`;
         }
         
-        document.body.addEventListener('click', () => {
-            if (!isSoundReady) {
-                Tone.start();
-                const soundFileUrl = "https://kappa.vgmsite.com/soundtracks/playstation-4-system-software-sounds-effects-ps4-gamerip-2013/qkgdbpixbo/12.%20Src19%20Se%20Log%20Cursor.mp3";
-
-                soundPlayer = new Tone.Player(soundFileUrl).toDestination();
-
-                soundPlayer.onload = () => {
-                    isSoundReady = true;
-                };
-            }
-        }, { once: true });
+        // کدهای مربوط به Tone.js در این قسمت حذف شدند
+        /* document.body.addEventListener('click', () => { ... } , { once: true }); */
         
         window.onload = function() {
+            
+            // --- ثبت Service Worker برای کش آفلاین ---
+            if ('serviceWorker' in navigator) {
+                // ثبت Service Worker بلافاصله پس از بارگذاری صفحه
+                navigator.serviceWorker.register('/sw.js')
+                .then(registration => {
+                    console.log('SW registration successful: ', registration.scope);
+                }, err => {
+                    console.log('SW registration failed: ', err);
+                });
+            }
+            // ------------------------------------------
+
             renderIcons();
             setInterval(updateTime, 60000);
             updateTime();
@@ -614,4 +623,5 @@
     </script>
 </body>
 </html>
+
 
